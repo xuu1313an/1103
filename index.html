@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#121012">
+<title>AER / FLOW — 玫瑰粉限定版極速造型吹風機</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+:root{--bg:#121012;--paper:#f7f4f2;--muted:#a39b9c;--pink:#ffb7c5;--rose:#e8869c;--gold:#f3d28b;--line:rgba(247,244,242,.15);--pad:clamp(22px,5vw,76px)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--paper);font-family:'Noto Sans TC',sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+.noise{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+header{height:82px;padding:0 var(--pad);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:absolute;top:0;width:100%;z-index:10}.logo{font:500 18px 'DM Mono';letter-spacing:.12em}.logo span{color:var(--pink)}nav{display:flex;gap:32px;font-size:12px;color:#d3cacb;letter-spacing:.08em}nav a{transition:color .25s}nav a:hover{color:var(--pink)}.menu{display:none;background:none;border:0;color:white;font-size:22px}
+
+.hero{min-height:100svh;padding:150px var(--pad) 70px;position:relative;display:grid;grid-template-columns:1.1fr 1.3fr;align-items:center;overflow:hidden;background:radial-gradient(ellipse at 75% 48%,#35212b 0%,#20141a 30%,#121012 70%)}
+.eyebrow{font:11px 'DM Mono';letter-spacing:.2em;color:var(--pink);text-transform:uppercase}.hero h1{font-size:clamp(50px,7.5vw,115px);line-height:.95;letter-spacing:-.075em;margin:24px 0 28px;font-weight:500}.hero h1 em{font-style:normal;color:var(--pink)}.hero-copy{max-width:380px;color:#d0c4c6;line-height:1.9;font-size:14px}.hero-actions{display:flex;align-items:center;gap:24px;margin-top:38px}.btn{border:1px solid var(--pink);background:var(--pink);color:#121012;padding:15px 24px;font-size:12px;letter-spacing:.08em;font-weight:700;transition:.3s}.btn:hover{background:transparent;color:var(--pink);transform:translateY(-3px)}.text-link{font:11px 'DM Mono';letter-spacing:.1em;color:#e2d8d9}.text-link:after{content:" ↗";color:var(--pink)}
+
+.hero-visual{height:min(75vh,680px);position:relative;z-index:1;display:grid;place-items:center}
+#heroCanvasContainer{width:100%;height:100%;position:absolute;inset:0}
+.hero-note{position:absolute;bottom:36px;left:var(--pad);font:10px 'DM Mono';color:#9d9193;letter-spacing:.15em}.hero-index{position:absolute;right:var(--pad);bottom:36px;font:10px 'DM Mono';color:#9d9193}
+
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;overflow:hidden;color:var(--pink);font:12px 'DM Mono';letter-spacing:.22em;white-space:nowrap}.marquee-track{display:inline-block;animation:marquee 28s linear infinite}.marquee span{padding:0 34px}@keyframes marquee{to{transform:translateX(-50%)}}
+
+.section{padding:130px var(--pad);position:relative}.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:70px}.section h2{font-size:clamp(38px,6vw,76px);line-height:1.08;letter-spacing:-.06em;font-weight:500;margin:16px 0 0}.section h2 span{color:var(--pink)}.section-intro{max-width:300px;color:var(--muted);font-size:13px;line-height:1.9}
+
+/* Story-driven Disassembly Section with interactive 3D slider and Text Reveal Effects */
+.dissect{background:#161215;position:relative}
+.dissect-stage{height:460vh;position:relative}
+.dissect-sticky{height:100vh;position:sticky;top:0;display:grid;grid-template-columns:1fr 1.2fr;align-items:center;overflow:hidden}
+.dissect-copy{padding-left:var(--pad);position:relative;z-index:2}
+.dissect-count{font:12px 'DM Mono';color:var(--pink);letter-spacing:.2em}
+.dissect-copy h3{font-size:clamp(34px,5vw,66px);line-height:1.05;letter-spacing:-.06em;margin:20px 0;transition:all 0.5s cubic-bezier(0.16, 1, 0.3, 1)}
+.dissect-copy p{max-width:360px;color:var(--muted);font-size:14px;line-height:1.9;transition:all 0.5s cubic-bezier(0.16, 1, 0.3, 1)}
+
+/* Text Animation Trigger Classes */
+.text-animate {
+  animation: textFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes textFadeInUp {
+  0% { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.dissect-visual{height:100%;position:relative;display:grid;place-items:center;cursor:grab}
+.dissect-visual:active{cursor:grabbing}
+#dissectCanvasContainer{width:100%;height:100%;position:absolute;inset:0}
+
+.dissect-slider-ui{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);width:min(320px,80vw);z-index:5;background:rgba(18,16,18,0.85);backdrop-filter:blur(10px);padding:14px 20px;border:1px solid var(--line);border-radius:30px;display:flex;flex-direction:column;gap:8px}
+.dissect-slider-label{display:flex;justify-content:space-between;font:11px 'DM Mono';color:var(--pink)}
+.dissect-range{width:100%;accent-color:var(--pink);cursor:pointer}
+
+.dissect-controls{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5;background:rgba(18,16,18,0.85);backdrop-filter:blur(10px);padding:6px 10px;border:1px solid var(--line);border-radius:30px}
+.dissect-btn{background:transparent;border:0;color:var(--muted);font:10px 'DM Mono';padding:6px 10px;border-radius:20px;transition:.3s}
+.dissect-btn.active{background:var(--pink);color:#121012;font-weight:700}
+.dissect-progress{position:absolute;right:var(--pad);top:50%;transform:translateY(-50%);height:170px;width:2px;background:rgba(247,244,242,0.2)}
+.dissect-progress span{display:block;width:2px;height:25%;background:var(--pink);transition:height .2s}
+
+.specs{background:#181417}.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}.spec{min-height:210px;padding:28px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:background .35s}.spec:hover{background:#261d22}.spec .num{font:11px 'DM Mono';color:var(--pink)}.spec strong{display:block;font-size:clamp(28px,3vw,42px);font-weight:400;margin:32px 0 8px;letter-spacing:-.05em}.spec p{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
+
+.feature-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}.feature{border:1px solid var(--line);padding:34px;min-height:230px;position:relative;overflow:hidden;transition:.35s}.feature:hover{border-color:var(--pink);transform:translateY(-5px)}.feature .icon{font-size:26px;color:var(--pink)}.feature h3{font-size:22px;font-weight:500;margin:24px 0 10px}.feature p{max-width:400px;color:var(--muted);font-size:13px;line-height:1.9}.feature small{position:absolute;right:28px;top:28px;font:10px 'DM Mono';color:#8c8285}
+
+.modes{background:#f0eae7;color:#1c171a}.modes .eyebrow{color:#b35f79}.mode-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:center}.mode-tabs{display:flex;flex-direction:column;border-top:1px solid #d4c7c3}.mode-tab{padding:22px 0;border-bottom:1px solid #d4c7c3;background:none;border-left:0;border-right:0;border-top:0;text-align:left;color:#7a6d71;display:flex;justify-content:space-between;align-items:center;transition:.25s}.mode-tab b{font-size:17px;font-weight:500}.mode-tab span{font:10px 'DM Mono'}.mode-tab.active{color:#1c171a;padding-left:14px;border-left:3px solid #e8869c}.mode-display{min-height:380px;background:#e2d7d3;display:grid;place-items:center;position:relative;overflow:hidden}.mode-display:before{content:"";position:absolute;width:300px;height:300px;border:1px solid #c9b7b2;border-radius:50%;box-shadow:0 0 0 40px #ffffff16,0 0 0 80px #ffffff12}.mode-visual{position:relative;z-index:1;text-align:center}.mode-symbol{font-size:100px;line-height:1;color:#b35f79;filter:drop-shadow(0 12px 8px #9e6f7d33)}.mode-display h3{font-size:24px;margin:18px 0 8px}.mode-display p{color:#6b5f63;font-size:12px}
+
+.cta{padding:140px var(--pad);text-align:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,#3a202d 0%,#161215 60%)}.cta:before{content:"";position:absolute;width:600px;height:600px;border:1px solid #ffb7c525;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 70px #ffb7c508,0 0 0 140px #ffb7c505}.cta>*{position:relative}.cta h2{font-size:clamp(48px,8vw,100px);line-height:1;letter-spacing:-.07em;font-weight:500;margin:24px 0}.cta p{color:#d4c4c8;font-size:13px;line-height:1.9;margin-bottom:32px}
+
+footer{padding:30px var(--pad);display:flex;justify-content:space-between;gap:20px;color:#8a7f82;font:10px 'DM Mono';letter-spacing:.08em;border-top:1px solid var(--line)}
+.reveal{opacity:0;transform:translateY(35px);transition:opacity .8s,transform .8s}.reveal.visible{opacity:1;transform:translateY(0)}.cursor-glow{position:fixed;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,#ffb7c50a,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%)}
+
+@media(max-width:800px){header{height:68px}nav{display:none}.menu{display:block}.hero{grid-template-columns:1fr;padding-top:130px;min-height:900px}.hero-copy{max-width:460px}.hero-visual{height:420px;margin-top:10px}.hero-note{bottom:20px}.section{padding:90px var(--pad)}.section-head{display:block;margin-bottom:45px}.section-intro{margin-top:20px}.dissect-stage{height:380vh}.dissect-sticky{grid-template-columns:1fr;grid-template-rows:35% 65%}.dissect-copy{padding:20px var(--pad) 0;align-self:end}.dissect-copy h3{font-size:clamp(32px,8vw,52px);margin:10px 0}.dissect-copy p{font-size:12px;max-width:90%}.dissect-visual{grid-row:2}.dissect-progress{right:20px;height:130px}.spec-grid{grid-template-columns:repeat(2,1fr)}.spec{min-height:170px;padding:20px}.spec strong{margin:24px 0 6px}.feature-list{grid-template-columns:1fr}.feature{min-height:200px;padding:25px}.mode-wrap{grid-template-columns:1fr;gap:35px}.mode-display{min-height:300px}.cta{padding:100px var(--pad)}footer{flex-direction:column}.hero-index{display:none}}
+@media(max-width:420px){.hero h1{font-size:52px}.hero{min-height:820px}.hero-visual{height:350px}.spec strong{font-size:29px}.mode-display{min-height:270px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<!-- Three.js Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+<div class="noise"></div><div class="cursor-glow" id="glow"></div>
+
+<header>
+  <a class="logo" href="#top">AER<span>/</span>FLOW</a>
+  <nav>
+    <a href="#dissect">核心拆解</a>
+    <a href="#specs">核心規格</a>
+    <a href="#features">產品功能</a>
+    <a href="#modes">智能模式</a>
+  </nav>
+  <button class="menu" aria-label="回到首頁" onclick="location.href='#top'">↗</button>
+</header>
+
+<main id="top">
+  <!-- Hero Section with Refined Pink 3D Hairdryer -->
+  <section class="hero">
+    <div class="hero-content reveal">
+      <div class="eyebrow">LIMITED ROSE EDITION / 01</div>
+      <h1>粉色奢華<br><em>風的新生。</em></h1>
+      <p class="hero-copy">以柔霧玫瑰粉交織香檳金點綴，結合極致擬真 3D 模型與 110,000 rpm 高速氣流，將日常吹整昇華為一場美學儀式。</p>
+      <div class="hero-actions">
+        <a class="btn" href="#dissect">探索 3D 結構　↘</a>
+        <a class="text-link" href="#specs">產品規格</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div id="heroCanvasContainer"></div>
+    </div>
+    <div class="hero-note">ROSE GOLD & CERAMIC FINISH</div>
+    <div class="hero-index">SCROLL TO EXPLORE　↓</div>
+  </section>
+
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>ROSE GOLD EDITION</span>✳<span>MAGNETIC AIR NOZZLE</span>✳<span>BRUSHLESS MOTOR</span>✳<span>SMART THERMAL CONTROL</span>✳<span>IONIC CARE TECH</span>✳
+    </div>
+  </div>
+
+  <!-- Story-Driven Disassembly Section with 3D Slider & Scroll Trigger -->
+  <section class="section dissect" id="dissect">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">PRODUCT DISASSEMBLY / 02</div>
+        <h2>四重核心，<br><span>精密解構。</span></h2>
+      </div>
+      <p class="section-intro">隨著頁面捲動或使用下方 3D 互動滑桿，探索 AER / FLOW 玫瑰粉限定版的磁吸風嘴、馬達室、手柄與進氣環細節。</p>
+    </div>
+    <div class="dissect-stage" id="dissectStage">
+      <div class="dissect-sticky">
+        <div class="dissect-copy">
+          <div class="dissect-count" id="dissectCount">01 / 04 — 磁吸風嘴</div>
+          <h3 id="dissectTitle">磁吸式<br>氣流風嘴。</h3>
+          <p id="dissectText">360 度自由旋轉的磁吸聚流風嘴，緊密貼合出風口，讓每一道氣流精準集中於造型部位。</p>
+        </div>
+        <div class="dissect-visual" id="dissectVisualArea">
+          <div id="dissectCanvasContainer"></div>
+          
+          <div class="dissect-slider-ui">
+            <div class="dissect-slider-label">
+              <span>EXPLOSION VIEW</span>
+              <span id="sliderPercent">0%</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="dissect-range" id="dissectRange">
+          </div>
+
+          <div class="dissect-controls" role="group" aria-label="拆解視圖控制">
+            <button class="dissect-btn active" data-step="0">01 風嘴</button>
+            <button class="dissect-btn" data-step="1">02 負離子</button>
+            <button class="dissect-btn" data-step="2">03 溫控晶片</button>
+            <button class="dissect-btn" data-step="3">04 馬達室</button>
+          </div>
+        </div>
+        <div class="dissect-progress"><span id="dissectProgress"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Specs -->
+  <section class="section specs" id="specs">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">TECHNICAL DATA / 03</div>
+        <h2>精緻外表，<br><span>強悍核心。</span></h2>
+      </div>
+      <p class="section-intro">將頂尖空氣力學與微型智慧晶片封存於柔霧玫瑰金的輕量機身之中。</p>
+    </div>
+    <div class="spec-grid reveal" id="specGrid">
+      <div class="spec">
+        <span class="num">01 / MOTOR</span>
+        <strong class="counter" data-target="110000" data-format="number">0<span style="font-size:16px"> rpm</span></strong>
+        <p>高轉速無刷馬達<br>瞬間釋放強大風量</p>
+      </div>
+      <div class="spec">
+        <span class="num">02 / AIR SPEED</span>
+        <strong class="counter" data-target="22" data-format="number">0<span style="font-size:16px"> m/s</span></strong>
+        <p>高壓直束氣流<br>快速帶走髮絲水分</p>
+      </div>
+      <div class="spec">
+        <span class="num">03 / WEIGHT</span>
+        <strong class="counter" data-target="398" data-format="number">0<span style="font-size:16px"> g</span></strong>
+        <p>黃金重心比例<br>手腕毫無負擔感</p>
+      </div>
+      <div class="spec">
+        <span class="num">04 / CONTROL</span>
+        <strong class="counter" data-target="100" data-format="number">0<span style="font-size:16px">×/s</span></strong>
+        <p>AI 智慧溫控晶片<br>持續動態調節溫度</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="section" id="features">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">FEATURE DETAILS / 04</div>
+        <h2>細節造就，<br>頂級<span>吹整體驗。</span></h2>
+      </div>
+      <p class="section-intro">每一項貼心設計，都是為了讓每天的梳理時光成為享受。</p>
+    </div>
+    <div class="feature-list">
+      <article class="feature reveal">
+        <small>FEATURE / 01</small>
+        <div class="icon">◉</div>
+        <h3>智慧恆溫防護</h3>
+        <p>高精度晶片每秒 100 次偵測出風口溫度，嚴格避免過熱傷害，使秀髮自然蓬鬆有光澤。</p>
+      </article>
+      <article class="feature reveal">
+        <small>FEATURE / 02</small>
+        <div class="icon">⌁</div>
+        <h3>極速聚流風道</h3>
+        <p>流線空氣動力學壓束設計，風速集中不發散，吹乾效率較傳統吹風機大幅提升。</p>
+      </article>
+      <article class="feature reveal">
+        <small>FEATURE / 03</small>
+        <div class="icon">✳</div>
+        <h3>高濃度負離子</h3>
+        <p>釋放千萬級負離子環繞髮絲，有效撫平毛躁、消除靜電，呈現絲綢般的柔順質感。</p>
+      </article>
+      <article class="feature reveal">
+        <small>FEATURE / 04</small>
+        <div class="icon">⌖</div>
+        <h3>玫瑰金磁吸配件</h3>
+        <p>香檳金與玫瑰粉的碰撞，磁吸式快拆設計讓造型風嘴與烘罩隨心切換。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Modes Section -->
+  <section class="section modes" id="modes">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">PERSONAL SETTINGS / 05</div>
+        <h2>量身打造的<br><span>四種智慧模式。</span></h2>
+      </div>
+      <p class="section-intro">點選下方模式，即時查看專屬的風溫與氣流配置。</p>
+    </div>
+    <div class="mode-wrap reveal">
+      <div class="mode-tabs" role="tablist">
+        <button class="mode-tab active" data-mode="0" role="tab" aria-selected="true"><b>快速吹乾</b><span>01 / FAST</span></button>
+        <button class="mode-tab" data-mode="1" role="tab" aria-selected="false"><b>柔順養護</b><span>02 / CARE</span></button>
+        <button class="mode-tab" data-mode="2" role="tab" aria-selected="false"><b>造型定型</b><span>03 / STYLE</span></button>
+        <button class="mode-tab" data-mode="3" role="tab" aria-selected="false"><b>冷風收尾</b><span>04 / COOL</span></button>
+      </div>
+      <div class="mode-display" aria-live="polite">
+        <div class="mode-visual">
+          <div class="mode-symbol" id="modeSymbol">〰</div>
+          <h3 id="modeName">快速吹乾</h3>
+          <p id="modeDesc">強風 × 中溫｜快速帶走多餘水分</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="eyebrow">LIMITED ROSE EDITION / 2026</div>
+    <h2>Feel the<br><span style="color:var(--pink)">FLOW.</span></h2>
+    <p>讓奢華粉色與極速氣流，<br>重新定義你的日常美學。</p>
+    <a class="btn" href="#top">回到頁面頂端　↑</a>
+  </section>
+</main>
+
+<footer>
+  <span>AER / FLOW — ROSE EDITION LANDING PAGE</span>
+  <span>DESIGNED FOR THE EVERYDAY / 2026</span>
+  <span>© 2026 AER / FLOW</span>
+</footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const glow = $('#glow');
+window.addEventListener('pointermove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: .14 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Text Animate Helper
+function triggerTextAnimation() {
+  const title = $('#dissectTitle');
+  const text = $('#dissectText');
+  const count = $('#dissectCount');
+  
+  [title, text, count].forEach(el => {
+    if(!el) return;
+    el.classList.remove('text-animate');
+    void el.offsetWidth; // trigger reflow
+    el.classList.add('text-animate');
+  });
+}
+
+// Number Counter Animation for Specs
+let counted = false;
+const specSection = $('#specs');
+const runCounters = () => {
+  document.querySelectorAll('.counter').forEach(counter => {
+    const target = +counter.getAttribute('data-target');
+    const suffix = counter.querySelector('span') ? counter.querySelector('span').outerHTML : '';
+    let start = 0;
+    const duration = 1800;
+    const startTime = performance.now();
+
+    const updateCount = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out expo
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = Math.floor(easeProgress * target);
+
+      counter.innerHTML = target >= 1000 ? current.toLocaleString() + ' ' + suffix : current + ' ' + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCount);
+      } else {
+        counter.innerHTML = target >= 1000 ? target.toLocaleString() + ' ' + suffix : target + ' ' + suffix;
+      }
+    };
+    requestAnimationFrame(updateCount);
+  });
+};
+
+const specObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !counted) {
+      runCounters();
+      counted = true;
+    }
+  });
+}, { threshold: 0.3 });
+if (specSection) specObserver.observe(specSection);
+
+// Interactive Hover Text for Spec Cards
+document.querySelectorAll('.spec').forEach(card => {
+  card.addEventListener('pointerenter', () => {
+    const numEl = card.querySelector('.num');
+    if(numEl) { numEl.style.color = 'var(--paper)'; numEl.style.transition = 'color 0.3s'; }
+  });
+  card.addEventListener('pointerleave', () => {
+    const numEl = card.querySelector('.num');
+    if(numEl) { numEl.style.color = 'var(--pink)'; }
+  });
+});
+
+/* ==========================================================
+   REFINED HIGH-DETAIL 3D HAIRDRYER MODEL (THREE.JS)
+   ========================================================== */
+function createRefinedHairdryerModel() {
+  const group = new THREE.Group();
+
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe8b0bc, metalness: 0.75, roughness: 0.28 });
+  const goldMat = new THREE.MeshStandardMaterial({ color: 0xf3d28b, metalness: 0.9, roughness: 0.2 });
+  const ringMat = new THREE.MeshStandardMaterial({ color: 0xffb7c5, emissive: 0x552233, metalness: 0.4, roughness: 0.3 });
+  const internalMat = new THREE.MeshStandardMaterial({ color: 0x2b2024, metalness: 0.8, roughness: 0.4 });
+  const copperMat = new THREE.MeshStandardMaterial({ color: 0xd88c53, metalness: 0.9, roughness: 0.3 });
+  const chromeMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.95, roughness: 0.1 });
+
+  // 1. Main Cylinder Shell
+  const bodyGeo = new THREE.CylinderGeometry(0.85, 0.85, 3.0, 32);
+  bodyGeo.rotateZ(Math.PI / 2);
+  const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+  bodyMesh.name = "shell";
+  group.add(bodyMesh);
+
+  // Decorative ring groove on shell
+  const grooveGeo = new THREE.TorusGeometry(0.86, 0.03, 16, 32);
+  grooveGeo.rotateY(Math.PI / 2);
+  const grooveMesh = new THREE.Mesh(grooveGeo, goldMat);
+  grooveMesh.position.x = -0.5;
+  grooveMesh.name = "groove";
+  group.add(grooveMesh);
+
+  // 2. Magnetic Nozzle (Front attachment)
+  const nozzleGeo = new THREE.CylinderGeometry(0.68, 0.86, 0.9, 32);
+  nozzleGeo.rotateZ(Math.PI / 2);
+  const nozzleMesh = new THREE.Mesh(nozzleGeo, goldMat);
+  nozzleMesh.position.x = 1.85;
+  nozzleMesh.name = "nozzle";
+  group.add(nozzleMesh);
+
+  // Nozzle inner lip
+  const nLipGeo = new THREE.TorusGeometry(0.66, 0.04, 16, 32);
+  nLipGeo.rotateY(Math.PI / 2);
+  const nLipMesh = new THREE.Mesh(nLipGeo, chromeMat);
+  nLipMesh.position.x = 2.3;
+  nLipMesh.name = "nozzleLip";
+  group.add(nLipMesh);
+
+  // 3. Ionic Ring / Air Outlet
+  const ringGeo = new THREE.TorusGeometry(0.7, 0.07, 16, 32);
+  ringGeo.rotateY(Math.PI / 2);
+  const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+  ringMesh.position.x = 1.35;
+  ringMesh.name = "ionRing";
+  group.add(ringMesh);
+
+  // 4. Handle
+  const handleGeo = new THREE.CylinderGeometry(0.42, 0.5, 3.2, 32);
+  const handleMesh = new THREE.Mesh(handleGeo, bodyMat);
+  handleMesh.position.set(-0.25, -2.0, 0);
+  handleMesh.rotation.z = -0.15;
+  handleMesh.name = "handle";
+  group.add(handleMesh);
+
+  // Handle Gold Power Button & LED Indicator
+  const btnGeo = new THREE.BoxGeometry(0.1, 0.45, 0.28);
+  const btnMesh = new THREE.Mesh(btnGeo, goldMat);
+  btnMesh.position.set(-0.48, -1.7, 0.35);
+  btnMesh.rotation.z = -0.15;
+  group.add(btnMesh);
+
+  const ledGeo = new THREE.SphereGeometry(0.06, 16, 16);
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0xffb7c5 });
+  const ledMesh = new THREE.Mesh(ledGeo, ledMat);
+  ledMesh.position.set(-0.52, -2.1, 0.33);
+  group.add(ledMesh);
+
+  // Handle Bottom Inlet Ring (Removable filter mesh)
+  const filterGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.3, 32);
+  const filterMesh = new THREE.Mesh(filterGeo, goldMat);
+  filterMesh.position.set(-0.5, -3.65, 0);
+  filterMesh.rotation.z = -0.15;
+  filterMesh.name = "filterRing";
+  group.add(filterMesh);
+
+  // 5. Thermal Sensor & Chip (Center Core)
+  const chipGeo = new THREE.BoxGeometry(0.45, 0.35, 0.35);
+  const chipMesh = new THREE.Mesh(chipGeo, goldMat);
+  chipMesh.position.set(0.3, 0, 0);
+  chipMesh.name = "thermalChip";
+  group.add(chipMesh);
+
+  const heatGeo = new THREE.CylinderGeometry(0.65, 0.65, 1.1, 16, 8, true);
+  heatGeo.rotateZ(Math.PI / 2);
+  const heatMesh = new THREE.Mesh(heatGeo, copperMat);
+  heatMesh.position.x = 0.4;
+  heatMesh.name = "heatingElement";
+  group.add(heatMesh);
+
+  // 6. Brushless Motor (Rear chamber)
+  const motorGeo = new THREE.CylinderGeometry(0.62, 0.62, 1.4, 24);
+  motorGeo.rotateZ(Math.PI / 2);
+  const motorMesh = new THREE.Mesh(motorGeo, internalMat);
+  motorMesh.position.x = -0.7;
+  motorMesh.name = "motor";
+  group.add(motorMesh);
+
+  // Motor Turbine Blades inside
+  const bladeGroup = new THREE.Group();
+  for(let i=0; i<6; i++) {
+    const bladeGeo = new THREE.BoxGeometry(0.04, 0.5, 0.15);
+    const blade = new THREE.Mesh(bladeGeo, goldMat);
+    blade.rotation.x = (i * Math.PI) / 3;
+    bladeGroup.add(blade);
+  }
+  bladeGroup.position.x = -1.3;
+  bladeGroup.name = "turbine";
+  group.add(bladeGroup);
+
+  return group;
+}
+
+/* --- Hero 3D Scene --- */
+const heroContainer = document.getElementById('heroCanvasContainer');
+const heroScene = new THREE.Scene();
+const heroCamera = new THREE.PerspectiveCamera(45, heroContainer.clientWidth / heroContainer.clientHeight, 0.1, 1000);
+heroCamera.position.set(7, 2, 7);
+heroCamera.lookAt(0, 0, 0);
+
+const heroRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+heroRenderer.setSize(heroContainer.clientWidth, heroContainer.clientHeight);
+heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+heroContainer.appendChild(heroRenderer.domElement);
+
+const heroAmbient = new THREE.AmbientLight(0xffffff, 1.3);
+heroScene.add(heroAmbient);
+const heroDir = new THREE.DirectionalLight(0xffb7c5, 2.8);
+heroDir.position.set(5, 8, 5);
+heroScene.add(heroDir);
+const heroPoint = new THREE.DirectionalLight(0xf3d28b, 1.5);
+heroPoint.position.set(-5, -2, -5);
+heroScene.add(heroPoint);
+
+const heroDryer = createRefinedHairdryerModel();
+heroDryer.rotation.z = -0.2;
+heroDryer.rotation.y = -0.6;
+// Initial entrance offset for JS entrance animation
+heroDryer.position.set(4, -3, -5);
+heroDryer.scale.set(0.1, 0.1, 0.1);
+heroScene.add(heroDryer);
+
+let heroTargetRotX = -0.6, heroTargetRotY = 0;
+let entranceProgress = 0; // Entrance animation progress (0 to 1)
+
+window.addEventListener('pointermove', e => {
+  if (innerWidth < 800) return;
+  const x = (e.clientX / innerWidth) - 0.5;
+  const y = (e.clientY / innerHeight) - 0.5;
+  heroTargetRotY = x * 0.8;
+  heroTargetRotX = -0.6 + y * 0.5;
+});
+
+function animateHero() {
+  requestAnimationFrame(animateHero);
+
+  // Smooth entrance transition on page load
+  if (entranceProgress < 1) {
+    entranceProgress += 0.022;
+    if (entranceProgress > 1) entranceProgress = 1;
+    // Ease out cubic
+    const ease = 1 - Math.pow(1 - entranceProgress, 3);
+    heroDryer.position.x = (1 - ease) * 4;
+    heroDryer.position.y = (1 - ease) * -3;
+    heroDryer.position.z = (1 - ease) * -5;
+    const s = 0.1 + ease * 0.9;
+    heroDryer.scale.set(s, s, s);
+  }
+
+  heroDryer.rotation.y += (heroTargetRotY - heroDryer.rotation.y) * 0.05;
+  heroDryer.rotation.x += (heroTargetRotX - heroDryer.rotation.x) * 0.05;
+  heroDryer.rotation.z = -0.2 + Math.sin(Date.now() * 0.0015) * 0.04;
+  heroRenderer.render(heroScene, heroCamera);
+}
+animateHero();
+
+/* --- Story-Driven Disassembly Scene with 3D Slider & Mouse Drag --- */
+const dissectContainer = document.getElementById('dissectCanvasContainer');
+const dissectScene = new THREE.Scene();
+const dissectCamera = new THREE.PerspectiveCamera(45, dissectContainer.clientWidth / dissectContainer.clientHeight, 0.1, 1000);
+dissectCamera.position.set(8, 2, 8);
+dissectCamera.lookAt(0, 0, 0);
+
+const dissectRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+dissectRenderer.setSize(dissectContainer.clientWidth, dissectContainer.clientHeight);
+dissectRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+dissectContainer.appendChild(dissectRenderer.domElement);
+
+const dissectAmbient = new THREE.AmbientLight(0xffffff, 1.4);
+dissectScene.add(dissectAmbient);
+const dissectDir = new THREE.DirectionalLight(0xffb7c5, 3.0);
+dissectDir.position.set(6, 10, 6);
+dissectScene.add(dissectDir);
+
+const dissectDryer = createRefinedHairdryerModel();
+dissectScene.add(dissectDryer);
+
+const parts = {
+  nozzle: dissectDryer.getObjectByName('nozzle'),
+  nozzleLip: dissectDryer.getObjectByName('nozzleLip'),
+  ionRing: dissectDryer.getObjectByName('ionRing'),
+  shell: dissectDryer.getObjectByName('shell'),
+  groove: dissectDryer.getObjectByName('groove'),
+  thermalChip: dissectDryer.getObjectByName('thermalChip'),
+  heatingElement: dissectDryer.getObjectByName('heatingElement'),
+  motor: dissectDryer.getObjectByName('motor'),
+  turbine: dissectDryer.getObjectByName('turbine'),
+  handle: dissectDryer.getObjectByName('handle'),
+  filterRing: dissectDryer.getObjectByName('filterRing')
+};
+
+const dissectData = [
+  { 
+    count: '01 / 04 — 磁吸風嘴', 
+    title: '磁吸式<br>氣流風嘴。', 
+    text: '360 度自由旋轉的磁吸聚流風嘴與金屬邊框，緊密貼合出風口，讓每一道氣流精準集中。', 
+    progress: '25%',
+    cameraPos: { x: 8, y: 2, z: 8 },
+    lookAt: { x: 1.5, y: 0, z: 0 }
+  },
+  { 
+    count: '02 / 04 — 負離子產生器', 
+    title: '高濃度<br>負離子環。', 
+    text: '環形負離子發生器釋放千萬級負離子群，瞬間中和靜電、撫平毛躁，成就絲綢般滑順髮質。', 
+    progress: '50%',
+    cameraPos: { x: 6, y: 1.5, z: 6 },
+    lookAt: { x: 0.8, y: 0, z: 0 }
+  },
+  { 
+    count: '03 / 04 — 智慧控溫晶片', 
+    title: 'AI 智慧溫控<br>晶片與發熱芯。', 
+    text: '每秒 100 次精準測溫，動態平衡熱能，避免高溫傷害毛鱗片，秀髮持久健康亮麗。', 
+    progress: '75%',
+    cameraPos: { x: 5, y: 3, z: 7 },
+    lookAt: { x: 0.2, y: 0, z: 0 }
+  },
+  { 
+    count: '04 / 04 — 高速馬達室', 
+    title: '110,000 rpm<br>超高速無刷馬達。', 
+    text: '核心動能心臟，體積輕巧卻能激發強勁直束氣流，將吹整效率推向全新極限。', 
+    progress: '100%',
+    cameraPos: { x: -7, y: 2, z: 7 },
+    lookAt: { x: -0.8, y: 0, z: 0 }
+  }
+];
+
+let currentDissectStep = 0;
+const dissectRange = $('#dissectRange');
+const sliderPercent = $('#sliderPercent');
+
+function applyExplosionFactor(t) {
+  if (parts.nozzle) parts.nozzle.position.x = 1.85 + t * 1.6;
+  if (parts.nozzleLip) parts.nozzleLip.position.x = 2.3 + t * 2.0;
+  if (parts.ionRing) parts.ionRing.position.x = 1.35 + t * 0.9;
+  if (parts.thermalChip) parts.thermalChip.position.y = t * 0.9;
+  if (parts.heatingElement) parts.heatingElement.position.x = 0.4 + t * 0.4;
+  if (parts.motor) parts.motor.position.x = -0.7 - t * 1.2;
+  if (parts.turbine) parts.turbine.position.x = -1.3 - t * 1.8;
+  if (parts.filterRing) parts.filterRing.position.y = -3.65 - t * 1.0;
+  if (parts.handle) parts.handle.position.y = -2.0 - t * 0.8;
+  if (parts.shell) dissectDryer.rotation.z = -0.15 + t * 0.1;
+}
+
+function updateDisassembly(step) {
+  if (step !== currentDissectStep) {
+    currentDissectStep = step;
+    const d = dissectData[step];
+    $('#dissectCount').textContent = d.count;
+    $('#dissectTitle').innerHTML = d.title;
+    $('#dissectText').textContent = d.text;
+    $('#dissectProgress').style.height = d.progress;
+    triggerTextAnimation();
+  }
+
+  document.querySelectorAll('.dissect-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === step);
+  });
+
+  const t = step / 3;
+  dissectRange.value = Math.round(t * 100);
+  sliderPercent.textContent = dissectRange.value + '%';
+  applyExplosionFactor(t);
+
+  const d = dissectData[step];
+  dissectCamera.position.set(d.cameraPos.x, d.cameraPos.y, d.cameraPos.z);
+  dissectCamera.lookAt(d.lookAt.x, d.lookAt.y, d.lookAt.z);
+}
+
+// Scroll-driven storytelling trigger
+window.addEventListener('scroll', () => {
+  const stage = $('#dissectStage');
+  if (!stage) return;
+  const r = stage.getBoundingClientRect();
+  const travel = stage.offsetHeight - innerHeight;
+  let p = Math.max(0, Math.min(1, -r.top / travel));
+  
+  dissectRange.value = Math.round(p * 100);
+  sliderPercent.textContent = dissectRange.value + '%';
+  applyExplosionFactor(p);
+
+  let step = Math.min(3, Math.floor(p * 4.001));
+  if (step !== currentDissectStep) {
+    currentDissectStep = step;
+    const d = dissectData[step];
+    $('#dissectCount').textContent = d.count;
+    $('#dissectTitle').innerHTML = d.title;
+    $('#dissectText').textContent = d.text;
+    $('#dissectProgress').style.height = d.progress;
+    triggerTextAnimation();
+    document.querySelectorAll('.dissect-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === step);
+    });
+  }
+}, { passive: true });
+
+// Slider input listener for interactive 3D explosion
+dissectRange.addEventListener('input', (e) => {
+  const val = +e.target.value;
+  sliderPercent.textContent = val + '%';
+  const t = val / 100;
+  applyExplosionFactor(t);
+});
+
+// Button click for Disassembly
+document.querySelectorAll('.dissect-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = Number(btn.dataset.step);
+    updateDisassembly(step);
+    const stage = $('#dissectStage');
+    const travel = stage.offsetHeight - innerHeight;
+    window.scrollTo({
+      top: stage.offsetTop + (step / 3) * travel,
+      behavior: 'smooth'
+    });
+  });
+});
+
+/* --- Mouse Drag Rotation on 3D Disassembly View --- */
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+const dissectVisualArea = $('#dissectVisualArea');
+
+dissectVisualArea.addEventListener('pointerdown', e => {
+  isDragging = true;
+  previousMousePosition = { x: e.clientX, y: e.clientY };
+});
+
+window.addEventListener('pointermove', e => {
+  if (!isDragging) return;
+  const deltaX = e.clientX - previousMousePosition.x;
+  const deltaY = e.clientY - previousMousePosition.y;
+
+  dissectDryer.rotation.y += deltaX * 0.008;
+  dissectDryer.rotation.x += deltaY * 0.008;
+
+  previousMousePosition = { x: e.clientX, y: e.clientY };
+});
+
+window.addEventListener('pointerup', () => {
+  isDragging = false;
+});
+
+function animateDissect() {
+  requestAnimationFrame(animateDissect);
+  if (!isDragging) {
+    dissectDryer.rotation.y += 0.003; // gentle idle rotation
+  }
+  if (parts.turbine) {
+    parts.turbine.rotation.x += 0.15; // spin turbine blades
+  }
+  dissectRenderer.render(dissectScene, dissectCamera);
+}
+animateDissect();
+
+/* --- Modes Tabs Interaction --- */
+const modes = [
+  ['〰', '快速吹乾', '強風 × 中溫｜快速帶走多餘水分'],
+  ['✳', '柔順養護', '中風 × 低溫｜日常溫和吹整'],
+  ['⌁', '造型定型', '集中風 × 中高溫｜打造線條與蓬度'],
+  ['❄', '冷風收尾', '柔風 × 冷風｜完成造型最後一步']
+];
+
+document.querySelectorAll('.mode-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    const m = modes[Number(btn.dataset.mode)];
+    $('#modeSymbol').textContent = m[0];
+    $('#modeName').textContent = m[1];
+    $('#modeDesc').textContent = m[2];
+    $('.mode-display').animate([
+      { opacity: .55, transform: 'translateY(8px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: 380, easing: 'ease-out' });
+  });
+});
+
+// Window resize handler
+window.addEventListener('resize', () => {
+  const heroW = heroContainer.clientWidth;
+  const heroH = heroContainer.clientHeight;
+  heroCamera.aspect = heroW / heroH;
+  heroCamera.updateProjectionMatrix();
+  heroRenderer.setSize(heroW, heroH);
+
+  const dissectW = dissectContainer.clientWidth;
+  const dissectH = dissectContainer.clientHeight;
+  dissectCamera.aspect = dissectW / dissectH;
+  dissectCamera.updateProjectionMatrix();
+  dissectRenderer.setSize(dissectW, dissectH);
+});
+</script>
+</body>
+</html>
